@@ -1,5 +1,6 @@
 import { promises } from "dns"
 import { Request } from "./interfaces"
+import { createHash } from 'crypto'
 
 export const percentGreenDomainToken = "<PERCENT_GREEN_DOMAIN>"
 export const blueBNToken = "<BLUE_BUCKET_NAME>"
@@ -48,17 +49,22 @@ const getGreenPercentFromDns: GetGreenPercentage = async () => {
     return await fetchFromDns()
 }
 
+const hashInput = (input: string) => {
+    let hash = createHash('md5').update(input).digest("hex")
+    return hash
+}
 type GetUserPercentage = (ipAddress: string) => number
 const getUserPercentFromIpAddress: GetUserPercentage = (ipAddress: string) => {
     // this probably isn't distributed evenly, but oh well...
+    const hashed = hashInput(ipAddress)
     let total = 1
-    for (let i = 0; i < ipAddress.length; i++) {
-        const code = ipAddress.charCodeAt(i);
+    for (let i = 0; i < hashed.length; i++) {
+        const code = hashed.charCodeAt(i);
         total = total + code * i
     }
     const mod100 = total % 100
     const userValue = mod100 + 1
-    l(`${ipAddress} -> ${total} -> ${mod100}`)
+    l(`${hashed} -> ${total} -> ${mod100}`)
     return userValue
 }
 
