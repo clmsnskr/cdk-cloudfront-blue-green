@@ -1,0 +1,12 @@
+version: "2.4"
+services:
+  run:
+    build: 
+      context: .
+    #   dockerfile: deploy-local/Dockerfile
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_ACCOUNT: ${AWS_ACCOUNT}
+      # some cloudfront features are only available in us-east-1
+      AWS_REGION: us-east-1
